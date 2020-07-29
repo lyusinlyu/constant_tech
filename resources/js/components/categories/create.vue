@@ -1,30 +1,23 @@
 <template>
-    <div class="login">
-        <div class="alert alert-danger" v-show="authError">
-            {{ authError }}
-        </div>
+    <div class="create">
         <div class="card form-wrapper">
-            <div class="card-header form-header">Login</div>
+            <span class="category-item" :style="{background: '#'+(Math.random()*0xFFFFFF<<0).toString(16)}"></span>
             <div class="card-body form-body">
-                <form @submit.prevent="authenticate">
+                <form @submit.prevent="save">
                     <div class="form-group row">
-                        <input type="text" v-model="form.email" placeholder="Email Address" :class="['form-control', {'is-invalid' : formErrors.email}]" @keyup="formErrors.email = ''">
-                        <span role="alert" class="invalid-feedback" v-if="formErrors.email">
-                            <strong>{{formErrors.email}}</strong>
+                        <input type="text" v-model="category.name" placeholder="Name" :class="['form-control', {'is-invalid' : formErrors.name}]" @keyup="formErrors.name = ''">
+                        <span role="alert" class="invalid-feedback" v-if="formErrors.name">
+                            <strong>{{formErrors.name}}</strong>
                         </span>
                     </div>
                     <div class="form-group row">
-                        <input type="password" v-model="form.password" placeholder="Password"  :class="['form-control', {'is-invalid' : formErrors.password}]" @keyup="formErrors.password = ''">
-                        <span role="alert" class="invalid-feedback" v-if="formErrors.password">
-                            <strong>{{formErrors.password}}</strong>
-                        </span>
+                        <select v-model="category.parent" class="form-control">
+                            <option value="" disabled>Select parent Category</option>
+                            <option v-for="category in categories" value="category.id">{{ category.name }}</option>
+                        </select>
                     </div>
                     <div class="form-group row">
-                        <input type="submit" value="Login">
-                    </div>
-                    <div class="form-footer">
-                        <span>Don't Have An Acoount Yet? </span>
-                        <router-link :to="{ name: 'register'}">Register Here</router-link>
+                        <input type="submit" value="Save">
                     </div>
                 </form>
             </div>
@@ -33,26 +26,41 @@
 </template>
 
 <script>
-    // import {login} from '../../helpers/api';
     export default {
         name: "create",
         data() {
             return {
-                form: {
-                    email: '',
-                    password: ''
-                },
+                categories: [],
+                category: {},
                 formErrors: {
-                    email: '',
-                    password: ''
+                    name: '',
                 },
-                authError: null
             };
         },
+        created() {
+            //set title for the page
+            this.$store.commit('set_title', this.category.id ? 'Update' : 'Create');
+
+            // Get all Categories
+            this.$store.dispatch('getCategories', "");
+        },
+        computed: {
+            categoriesData: {
+                // getter
+                get: function () {
+                    this.categories = this.$store.state.categories;
+                },
+                // setter
+                set: function (newValue) {
+                    return this.categories = newValue
+                },
+            },
+        },
         methods: {
-            authenticate() {
-                this.formErrors.email = '';
-                this.formErrors.password = '';
+            save() {
+                this.formErrors.name = !this.category.name ? 'Category name is required' : '';
+                console.log(this.formErrors.name);
+                if (this.formErrors.name) return;
                 const credentials = this.$data.form;
                 login(credentials)
                     .then((res) => {
@@ -64,28 +72,6 @@
                         if (response) {
                             const statusCode = response.status;
                             const data = response.data;
-
-                            switch (statusCode) {
-                                case 401: {
-                                    this.authError = data;
-                                    if (this.errTimeOut) {
-                                        clearTimeout(this.errTimeOut);
-                                    }
-                                    this.errTimeOut = setTimeout(() => {
-                                        this.authError = null;
-                                    }, 4000);
-                                    break;
-                                }
-                                case 422: {
-                                    const errObj = data.errors;
-
-                                    for (const key in errObj) {
-                                        this.formErrors[key] = errObj[key][0];
-                                    }
-
-                                    break;
-                                }
-                            }
                         }
                     });
             }
@@ -95,7 +81,17 @@
 
 
 <style>
-    .login {
+    .category-item {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 5px;
+    }
+
+
+
+    .create {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -109,17 +105,6 @@
         border: none;
         box-shadow: 1px 2px 8px #ccc;
         border-radius: 15px;
-    }
-    .form-header {
-        background: #d7dee5;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        font-size: 20px;
-        color: #999;
-        font-weight: 600;
-        border: none;
-        display: flex;
-        align-items: center;
     }
 
     .form-body {

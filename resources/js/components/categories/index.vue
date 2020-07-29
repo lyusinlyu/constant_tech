@@ -1,6 +1,6 @@
 <template>
     <div class="categories-container">
-        <router-link :to="{ name: 'create'}"><i class="fas fa-plus-circle pointer"></i></router-link>
+        <router-link :to="{ name: 'create'}"><i class="fas fa-plus-circle pointer mb-10"></i></router-link>
         <div v-if="categories.length">
             <draggable class="list-group" tag="ul" v-model="categories" v-bind="dragOptions" :move="onMove"
                        @start="isDragging=true" @end="isDragging=false">
@@ -40,11 +40,11 @@
             categoriesData: {
                 // getter
                 get: function () {
-                    this.categories = this.$store.state.categories;
+                    return this.categories = this.$store.state.categories;
                 },
                 // setter
                 set: function (newValue) {
-                    this.categories = newValue
+                    return this.categories = newValue
                 },
             },
             currentList() {
@@ -59,8 +59,11 @@
             },
         },
         created() {
+            //set title for the page
+            this.$store.commit('set_title', 'Categories');
+
             // Get all Categories
-            this.$store.dispatch('getCategories');
+            this.$store.dispatch('getCategories', true);
         },
         methods: {
             // onMove event handler: get categories list to update

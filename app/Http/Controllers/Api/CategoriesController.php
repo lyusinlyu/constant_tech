@@ -57,13 +57,7 @@ class CategoriesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        $data = $request->all();
-        dd($data);
-    }
-
-    public function updateOrdering(Request $request)
+    public function update(Request $request)
     {
         $dataToUpdate = $request->all();
         foreach ($dataToUpdate as $data) {

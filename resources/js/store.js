@@ -1,11 +1,16 @@
 export default {
     state: {
+        title: '',
         categories: [],
         currentList: [],
         currentParentId: null,
     },
 
     mutations: {
+        set_title(state, title) {
+            state.title = title;
+            console.log(state.title);
+        },
         set_current_list(state, list) {
             state.currentList = list;
         },
@@ -18,8 +23,8 @@ export default {
     },
 
     actions: {
-        getCategories(context) {
-            axios.get('/api/categories').then((response) => {
+        getCategories(context, nested) {
+            axios.get(`/api/categories?all=${nested}`).then((response) => {
                 context.commit('set_categories', response.data);
             }).catch(function (error) {
                 console.log(error);
@@ -28,7 +33,7 @@ export default {
 
         updateCategories(context, data) {
             return new Promise((res, rej) => {
-                axios.post('/api/categories', data)
+                axios.put('/api/categories', data)
                     .then((response) => {
                     res(response.data)
                     }).catch(function (error) {

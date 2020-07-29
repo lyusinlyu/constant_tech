@@ -15,9 +15,13 @@ use App\Category;
 |
 */
 
-Route::post('categories', 'Api\CategoriesController@updateOrdering');
+Route::put('categories', 'Api\CategoriesController@update');
 
 //Route::resource('categories', 'Api\CategoriesController');
-Route::get('/categories', function () {
-    return response()->json(Category::whereNull('parent_id')->with('allChildrenCategories')->orderBy('order', 'ASC')->get());
+Route::get('/categories', function (Request $request) {
+    $nested = $request->get('all');
+    if ($nested) {
+        return response()->json(Category::whereNull('parent_id')->with('allChildrenCategories')->orderBy('order', 'ASC')->get());
+    }
+    return response()->json(Category::all());
 });
