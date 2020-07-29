@@ -13,20 +13,15 @@ class CategoriesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $withSubCategories = $request->get('all');
+        if ($withSubCategories) {
+            return response()->json(Category::whereNull('parent_id')->with('allChildrenCategories')->orderBy('order', 'ASC')->get());
+        }
+        return response()->json(Category::all());
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -38,18 +33,10 @@ class CategoriesController extends Controller
     {
         $data = $request->all();
         $data['order'] = isset($data['parent_id']) ? Category::find($data['parent_id'])->childrenCategories->count() : Category::whereNull('parent_id')->get()->count();
-        return response()->json(Category::create($data));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return response()->json([
+            'statusCode' => 200,
+            'message' => 'Category was created successfully'
+        ]);
     }
 
     /**
@@ -69,6 +56,9 @@ class CategoriesController extends Controller
                 'parent_id' => $data['parent_id']
             ]);
         }
-        return response()->json(Category::whereNull('parent_id')->with('allChildrenCategories')->get());
+        return response()->json([
+            'statusCode' => 200,
+            'message' => 'Category was updated successfully'
+        ]);
     }
 }
