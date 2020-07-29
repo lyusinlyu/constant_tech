@@ -9,7 +9,6 @@ export default {
     mutations: {
         set_title(state, title) {
             state.title = title;
-            console.log(state.title);
         },
         set_current_list(state, list) {
             state.currentList = list;

@@ -21,9 +21,7 @@
         },
         data: function() {
             return {
-                updateData: [],
-                parentId: null,
-                list: [],
+                //
             }
         },
         components: {
@@ -32,23 +30,9 @@
         name: "nested-draggable",
         methods: {
             onMove({ relatedContext, draggedContext }) {
-                const relatedElement = relatedContext.element;
-                const draggedElement = draggedContext.element;
                 setTimeout(() => {
                     this.$store.commit("set_current_list", relatedContext['list']);
                 }, 300)
-            },
-            update(data) {
-                console.log('updateeeeeeeee nested', data);
-                if (data.length) {
-                    axios.post('/api/categories', data).then((response) => {
-                        // this.categories = response.data;
-                        // this.orderList();
-                        // console.log(response)
-                    }).catch(function (error) {
-                        // console.log(error);
-                    });
-                }
             },
         }
     };

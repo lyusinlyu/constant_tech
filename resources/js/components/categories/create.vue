@@ -80,15 +80,23 @@
                 if (this.$route.params.id) {
                     this.$store.dispatch('updateCategories', [this.category])
                         .then((response) => {
-                            console.log('success')
+                            this.$toast.success(response.data.message);
+                            setTimeout(() => {
+                                this.$router.push('index')
+                            }, 1000)
                         })
-                        .catch((error) => {});
+                        .catch((error) => {
+                            this.$toast.error('Something went wrong')
+                        });
                 } else {
                     axios.post('/api/categories', this.category)
                         .then((response) => {
-                            console.log(success)
+                            this.$toast.success(response.data.message);
+                            setTimeout(() => {
+                                this.$router.push('index')
+                            }, 1000)
                         }).catch(function (error) {
-                            console.log(error)
+                            this.$toast.error('Something went wrong')
                     });
                 }
             }

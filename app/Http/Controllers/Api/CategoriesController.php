@@ -33,6 +33,7 @@ class CategoriesController extends Controller
     {
         $data = $request->all();
         $data['order'] = isset($data['parent_id']) ? Category::find($data['parent_id'])->childrenCategories->count() : Category::whereNull('parent_id')->get()->count();
+        Category::create($data);
         return response()->json([
             'statusCode' => 200,
             'message' => 'Category was created successfully'

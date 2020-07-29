@@ -67,12 +67,14 @@
             this.$store.dispatch('getCategories', true);
         },
         methods: {
+
             // onMove event handler: get categories list to update
             onMove({ relatedContext, draggedContext }) {
                 setTimeout(() => {
                     this.$store.commit("set_current_list", relatedContext['list']);
                 }, 300)
             },
+
             // Find parentId for categories list
             findParentCategoryId() {
                 if (!this.currentList[0].parent_id) return null;
@@ -95,6 +97,7 @@
                 }
                 return pId;
             },
+
             // Setup order and parentId properties based on position in the categories tree.
             setupUpdateData() {
                 let parentId = this.findParentCategoryId();
@@ -109,14 +112,17 @@
                 });
                 this.update(this.updateData);
             },
+
             //update categories list
             update(data) {
                 if (!data.length) return;
                 this.$store.dispatch('updateCategories', data)
                     .then((response) => {
-                    console.log('success')
-                })
-                .catch((error) => {});
+                        this.$toast.success(response.data.message)
+                    })
+                .catch((error) => {
+                    this.$toast.error(response.data.message)
+                });
             },
         }
     }

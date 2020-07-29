@@ -12,9 +12,11 @@ import StoreData from './store';
 import VueRouter from 'vue-router';
 import {routes} from './routes';
 import MainApp from './components/MainApp.vue';
+import VueToast from 'vue-toast-notification';
 
 window.Vue.use(VueRouter);
 window.Vue.use(Vuex);
+window.Vue.use(VueToast);
 
 const store = new Vuex.Store(StoreData);
 const router = new VueRouter({
