@@ -1,13 +1,15 @@
 <template>
     <draggable class="dragArea" :move="onMove" tag="ul" :list="tasks" :group="{ name: 'g1' }">
-        <li v-for="el in tasks" :key="el.id" :data-id="el.id">
-            <span class="category-item" :style="{background: '#'+(Math.random()*0xFFFFFF<<0).toString(16)}"></span>
-            <span>{{ el.name }}</span>
-            <router-link :to="{ path: `categories/update/${el.id}`}"><i class="fas fa-pen-square pointer"></i></router-link>
-            <div v-if="el.all_children_categories && el.all_children_categories.length">
-                <nested-draggable :move="onMove" :tasks="el.all_children_categories" />
-            </div>
-        </li>
+        <transition-group type="transition" :name="'flip-list-nested'">
+            <li v-for="el in tasks" :key="el.id" :data-id="el.id">
+                <span class="category-item" :style="{background: '#'+(Math.random()*0xFFFFFF<<0).toString(16)}"></span>
+                <span>{{ el.name }}</span>
+                <router-link :to="{ path: `categories/update/${el.id}`}"><i class="fas fa-pen-square pointer"></i></router-link>
+                <div v-if="el.all_children_categories && el.all_children_categories.length">
+                    <nested-draggable :move="onMove" :tasks="el.all_children_categories" />
+                </div>
+            </li>
+        </transition-group>
     </draggable>
 </template>
 <script>
