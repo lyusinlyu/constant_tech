@@ -44,15 +44,15 @@
             // Get all Categories
             this.$store.dispatch('getCategories', "")
                 .then((response) => {
-                    //getCategory if update
-                    if (this.$route.params.id) {
-                        let check = setInterval(() => {
-                            if (this.categories && this.categories.length) {
-                                this.setCategoryData(this.$route.params.id);
-                                clearInterval(check);
-                            }
-                        }, 100);
-                    }
+                    // //getCategory if update
+                    // if (this.$route.params.id) {
+                    //     let check = setInterval(() => {
+                    //         if (this.categories && this.categories.length) {
+                    //             this.setCategoryData(this.$route.params.id);
+                    //             clearInterval(check);
+                    //         }
+                    //     }, 100);
+                    // }
                 })
                 .catch((error) => {});
         },
@@ -68,6 +68,15 @@
                 },
             },
         },
+        watch: {
+            categories(val) {
+                if (this.$route.params.id) {
+                    if (val && val.length) {
+                        this.setCategoryData(this.$route.params.id);
+                    }
+                }
+            }
+        },
         methods: {
             setCategoryData(id) {
               this.category = this.categories.find((category) => {
@@ -80,7 +89,7 @@
                 if (this.$route.params.id) {
                     this.$store.dispatch('updateCategories', [this.category])
                         .then((response) => {
-                            this.$toast.success(response.data.message);
+                            this.$toast.success(response.message);
                             setTimeout(() => {
                                 this.$router.push('index')
                             }, 1000)
@@ -91,7 +100,7 @@
                 } else {
                     axios.post('/api/categories', this.category)
                         .then((response) => {
-                            this.$toast.success(response.data.message);
+                            this.$toast.success(response.message);
                             setTimeout(() => {
                                 this.$router.push('index')
                             }, 1000)

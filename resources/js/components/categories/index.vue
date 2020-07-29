@@ -4,17 +4,7 @@
         <div v-if="categories.length">
             <draggable class="list-group" tag="ul" v-model="categories" v-bind="dragOptions" :move="onMove"
                        @start="isDragging=true" @end="isDragging=false">
-                <transition-group type="transition" :name="'flip-list'">
-                    <li class="list-group-item mb-10" v-for="element in categories" :key="element.id" :data-id="element.id">
-                        <span class="category-item" :style="{background: '#'+(Math.random()*0xFFFFFF<<0).toString(16)}"></span>
-                        <i :class="element.fixed? 'fa fa-anchor' : 'glyphicon glyphicon-pushpin'" @click=" element.fixed=! element.fixed" aria-hidden="true"></i>
-                        <span>{{element.name}}</span>
-                        <router-link :to="{ path: `categories/update/${element.id}`}"><i class="fas fa-pen-square pointer"></i></router-link>
-                        <div v-if="element.all_children_categories && element.all_children_categories.length">
-                            <nested-draggable :tasks="element.all_children_categories" />
-                        </div>
-                    </li>
-                </transition-group>
+                    <nested-draggable :tasks="categories" />
             </draggable>
         </div>
         <div v-else>There is no existing Category yet.</div>
@@ -101,8 +91,7 @@
             // Setup order and parentId properties based on position in the categories tree.
             setupUpdateData() {
                 let parentId = this.findParentCategoryId();
-                let arr = parentId == null ? this.currentList.slice(0).reverse() : this.currentList;
-                this.updateData = arr.map(function(item, index, array) {
+                this.updateData = this.currentList.map(function(item, index) {
                     return {
                         id: item.id,
                         name: item.name,
@@ -118,16 +107,21 @@
                 if (!data.length) return;
                 this.$store.dispatch('updateCategories', data)
                     .then((response) => {
-                        this.$toast.success(response.data.message)
+                        this.$toast.success(response.message)
                     })
                 .catch((error) => {
-                    this.$toast.error(response.data.message)
+                    console.log(error);
+                    this.$toast.error('Something went wrong')
                 });
             },
         }
     }
 </script>
 <style scoped>
+    .dragArea {
+        min-height: 50px;
+        /*outline: 1px dashed;*/
+    }
     .category-item {
         position: absolute;
         left: 0;

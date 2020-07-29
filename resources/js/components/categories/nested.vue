@@ -1,6 +1,5 @@
 <template>
     <draggable class="dragArea" :move="onMove" tag="ul" :list="tasks" :group="{ name: 'g1' }">
-        <transition-group type="transition" :name="'flip-list-nested'">
             <li v-for="el in tasks" :key="el.id" :data-id="el.id">
                 <span class="category-item" :style="{background: '#'+(Math.random()*0xFFFFFF<<0).toString(16)}"></span>
                 <span>{{ el.name }}</span>
@@ -9,7 +8,6 @@
                     <nested-draggable :move="onMove" :tasks="el.all_children_categories" />
                 </div>
             </li>
-        </transition-group>
     </draggable>
 </template>
 <script>
@@ -40,6 +38,10 @@
     };
 </script>
 <style scoped>
+    .dragArea {
+        min-height: 50px;
+        /*outline: 1px dashed;*/
+    }
 .category-item {
     position: absolute;
     left: 0;
