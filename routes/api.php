@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Category;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,3 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('categories', 'Api\CategoriesController@updateOrdering');
+
+//Route::resource('categories', 'Api\CategoriesController');
+Route::get('/categories', function () {
+    return response()->json(Category::whereNull('parent_id')->with('allChildrenCategories')->orderBy('order', 'ASC')->get());
+});

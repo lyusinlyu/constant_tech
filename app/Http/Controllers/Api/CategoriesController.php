@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Category;
 
 class CategoriesController extends Controller
 {
@@ -58,6 +59,19 @@ class CategoriesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = $request->all();
+        dd($data);
+    }
+
+    public function updateOrdering(Request $request)
+    {
+        $dataToUpdate = $request->all();
+        foreach ($dataToUpdate as $data) {
+            Category::where('id', $data['id'])->update([
+                'order' => $data['order'],
+                'parent_id' => $data['parent_id']
+            ]);
+        }
+        return response()->json(Category::whereNull('parent_id')->with('allChildrenCategories')->get());
     }
 }

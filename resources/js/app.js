@@ -7,14 +7,16 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-
-
+import Vuex from 'vuex';
+import StoreData from './store';
 import VueRouter from 'vue-router';
 import {routes} from './routes';
 import MainApp from './components/MainApp.vue';
 
 window.Vue.use(VueRouter);
+window.Vue.use(Vuex);
 
+const store = new Vuex.Store(StoreData);
 const router = new VueRouter({
     routes,
     mode: 'history'
@@ -28,6 +30,7 @@ const router = new VueRouter({
 
 const app = new Vue({
     el: '#app',
+    store,
     router,
     components: {
         MainApp
