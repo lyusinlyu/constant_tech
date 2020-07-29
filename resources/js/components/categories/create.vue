@@ -11,9 +11,9 @@
                         </span>
                     </div>
                     <div class="form-group row">
-                        <select v-model="category.parent" class="form-control">
+                        <select v-model="category.parent_id" class="form-control" :disabled="$route.params.id && !category.parent_id">
                             <option value="" disabled>Select parent Category</option>
-                            <option v-for="category in categories" value="category.id">{{ category.name }}</option>
+                            <option v-for="category in categories" :value="category.id">{{ category.name }}</option>
                         </select>
                     </div>
                     <div class="form-group row">
@@ -39,16 +39,28 @@
         },
         created() {
             //set title for the page
-            this.$store.commit('set_title', this.category.id ? 'Update' : 'Create');
+            this.$store.commit('set_title', this.$route.params.id ? 'Update the Category' : 'Create a Category');
 
             // Get all Categories
-            this.$store.dispatch('getCategories', "");
+            this.$store.dispatch('getCategories', "")
+                .then((response) => {
+                    //getCategory if update
+                    if (this.$route.params.id) {
+                        let check = setInterval(() => {
+                            if (this.categories && this.categories.length) {
+                                this.setCategoryData(this.$route.params.id);
+                                clearInterval(check);
+                            }
+                        }, 100);
+                    }
+                })
+                .catch((error) => {});
         },
         computed: {
             categoriesData: {
                 // getter
                 get: function () {
-                    this.categories = this.$store.state.categories;
+                    return this.categories = this.$store.state.categories;
                 },
                 // setter
                 set: function (newValue) {
@@ -57,23 +69,28 @@
             },
         },
         methods: {
+            setCategoryData(id) {
+              this.category = this.categories.find((category) => {
+                  return category.id == id;
+              });
+            },
             save() {
                 this.formErrors.name = !this.category.name ? 'Category name is required' : '';
-                console.log(this.formErrors.name);
                 if (this.formErrors.name) return;
-                const credentials = this.$data.form;
-                login(credentials)
-                    .then((res) => {
-                        this.$store.commit("login_success", {access_token: res});
-                        this.$router.push({name: 'home'});
-                    })
-                    .catch((error) => {
-                        const response = error.response;
-                        if (response) {
-                            const statusCode = response.status;
-                            const data = response.data;
-                        }
+                if (this.$route.params.id) {
+                    this.$store.dispatch('updateCategories', [this.category])
+                        .then((response) => {
+                            console.log('success')
+                        })
+                        .catch((error) => {});
+                } else {
+                    axios.post('/api/categories', this.category)
+                        .then((response) => {
+                            console.log(success)
+                        }).catch(function (error) {
+                            console.log(error)
                     });
+                }
             }
         }
     }
@@ -96,7 +113,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100vh;
+        height: 50vh;
     }
     .form-wrapper {
         flex-direction: row;

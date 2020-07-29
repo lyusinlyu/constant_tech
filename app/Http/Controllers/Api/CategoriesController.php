@@ -36,7 +36,9 @@ class CategoriesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        $data['order'] = isset($data['parent_id']) ? Category::find($data['parent_id'])->childrenCategories->count() : Category::whereNull('parent_id')->get()->count();
+        return response()->json(Category::create($data));
     }
 
     /**
@@ -62,6 +64,7 @@ class CategoriesController extends Controller
         $dataToUpdate = $request->all();
         foreach ($dataToUpdate as $data) {
             Category::where('id', $data['id'])->update([
+                'name' => $data['name'],
                 'order' => $data['order'],
                 'parent_id' => $data['parent_id']
             ]);

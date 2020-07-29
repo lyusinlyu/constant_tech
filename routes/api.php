@@ -15,6 +15,7 @@ use App\Category;
 |
 */
 
+Route::post('categories', 'Api\CategoriesController@store');
 Route::put('categories', 'Api\CategoriesController@update');
 
 //Route::resource('categories', 'Api\CategoriesController');

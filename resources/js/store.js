@@ -24,10 +24,14 @@ export default {
 
     actions: {
         getCategories(context, nested) {
-            axios.get(`/api/categories?all=${nested}`).then((response) => {
-                context.commit('set_categories', response.data);
-            }).catch(function (error) {
-                console.log(error);
+            return new Promise((res, rej) => {
+                axios.get(`/api/categories?all=${nested}`)
+                    .then((response) => {
+                        context.commit('set_categories', response.data);
+                        res(response.data);
+                    }).catch(function (error) {
+                    rej(error);
+                });
             });
         },
 

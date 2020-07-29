@@ -8,7 +8,8 @@
                     <li class="list-group-item mb-10" v-for="element in categories" :key="element.id" :data-id="element.id">
                         <span class="category-item" :style="{background: '#'+(Math.random()*0xFFFFFF<<0).toString(16)}"></span>
                         <i :class="element.fixed? 'fa fa-anchor' : 'glyphicon glyphicon-pushpin'" @click=" element.fixed=! element.fixed" aria-hidden="true"></i>
-                        {{element.name}}
+                        <span>{{element.name}}</span>
+                        <router-link :to="{ path: `categories/update/${element.id}`}"><i class="fas fa-pen-square pointer"></i></router-link>
                         <div v-if="element.all_children_categories && element.all_children_categories.length">
                             <nested-draggable :tasks="element.all_children_categories" />
                         </div>
@@ -101,6 +102,7 @@
                 this.updateData = arr.map(function(item, index, array) {
                     return {
                         id: item.id,
+                        name: item.name,
                         order: index,
                         parent_id: parentId
                     };
@@ -110,7 +112,8 @@
             //update categories list
             update(data) {
                 if (!data.length) return;
-                this.$store.dispatch('updateCategories', data).then((response) => {
+                this.$store.dispatch('updateCategories', data)
+                    .then((response) => {
                     console.log('success')
                 })
                 .catch((error) => {});

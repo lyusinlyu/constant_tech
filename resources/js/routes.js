@@ -11,5 +11,10 @@ export const routes = [
         name: 'create',
         component: Create
     },
+    {
+        path: '/categories/update/:id',
+        name: 'update',
+        component: Create
+    },
     { path: '/*', redirect: { name: 'index' }}
 ];
