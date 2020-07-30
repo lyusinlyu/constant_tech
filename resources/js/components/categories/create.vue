@@ -1,7 +1,12 @@
 <template>
     <div class="create">
+        <div class="back-link">
+            <router-link :to="{ name: 'index'}" class="btn btn-link"><i class="fas fa-arrow-left pointer pr-2"></i>Back</router-link>
+        </div>
         <div class="card form-wrapper">
+
             <span class="category-item" :style="{background: '#'+(Math.random()*0xFFFFFF<<0).toString(16)}"></span>
+
             <div class="card-body form-body">
                 <form @submit.prevent="save">
                     <div class="form-group row">
@@ -30,7 +35,6 @@
         name: "create",
         data() {
             return {
-                categories: [],
                 category: {},
                 formErrors: {
                     name: '',
@@ -57,14 +61,14 @@
                 .catch((error) => {});
         },
         computed: {
-            categoriesData: {
+            categories: {
                 // getter
                 get: function () {
-                    return this.categories = this.$store.state.categories;
+                    return this.$store.state.categories;
                 },
                 // setter
                 set: function (newValue) {
-                    return this.categories = newValue
+                    return newValue
                 },
             },
         },
@@ -91,7 +95,7 @@
                         .then((response) => {
                             this.$toast.success(response.message);
                             setTimeout(() => {
-                                this.$router.push('index')
+                                this.$router.push({name: 'index'})
                             }, 1000)
                         })
                         .catch((error) => {
@@ -102,7 +106,7 @@
                         .then((response) => {
                             this.$toast.success(response.message);
                             setTimeout(() => {
-                                this.$router.push('index')
+                                this.$router.push({name: 'index'})
                             }, 1000)
                         }).catch(function (error) {
                             this.$toast.error('Something went wrong')
@@ -122,7 +126,6 @@
         bottom: 0;
         width: 5px;
     }
-
 
 
     .create {
@@ -163,24 +166,9 @@
         border: 1px solid #68a3d6;
         margin-top: 15px;
     }
-
-    .form-body input[type=submit]:hover {
-        background: #588ab5;
-        border-color: #588ab5;
-        cursor: pointer;
+    .back-link {
+        position: absolute;
+        left: 0;
+        top: 50px;
     }
-
-    .form-footer span {
-        font-size: 12px;
-        color: #555;
-    }
-
-    .form-footer a {
-        color: #588ab5;
-        font-weight: 600;
-        cursor: pointer;
-        font-style: italic;
-    }
-
-
 </style>

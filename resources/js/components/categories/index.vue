@@ -22,20 +22,19 @@
         },
         data: function () {
             return {
-                categories: [],
                 updateData: [],
                 dragOptions: {group: { name:'categories', pull:'clone', put:'true'}}
             }
         },
         computed: {
-            categoriesData: {
+            categories: {
                 // getter
                 get: function () {
-                    return this.categories = this.$store.state.categories;
+                    return this.$store.state.categories;
                 },
                 // setter
                 set: function (newValue) {
-                    return this.categories = newValue
+                    return newValue
                 },
             },
             currentList() {
@@ -50,11 +49,15 @@
             },
         },
         created() {
+            console.log('created');
             //set title for the page
             this.$store.commit('set_title', 'Categories');
 
             // Get all Categories
             this.$store.dispatch('getCategories', true);
+        },
+        mounted() {
+            console.log('mounted');
         },
         methods: {
 

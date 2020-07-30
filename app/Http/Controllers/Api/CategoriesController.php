@@ -54,7 +54,7 @@ class CategoriesController extends Controller
             Category::where('id', $data['id'])->update([
                 'name' => $data['name'],
                 'order' => $data['order'],
-                'parent_id' => $data['parent_id']
+                'parent_id' => isset($data['parent_id']) ? $data['parent_id'] : null,
             ]);
         }
         return response()->json([
