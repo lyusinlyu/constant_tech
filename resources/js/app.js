@@ -13,6 +13,7 @@ import VueRouter from 'vue-router';
 import {routes} from './routes';
 import MainApp from './components/MainApp.vue';
 import VueToast from 'vue-toast-notification';
+import {init} from './helpers/init';
 
 window.Vue.use(VueRouter);
 window.Vue.use(Vuex);
@@ -23,6 +24,11 @@ const router = new VueRouter({
     routes,
     mode: 'history'
 });
+
+/**
+ * init application
+ */
+init(store, router);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

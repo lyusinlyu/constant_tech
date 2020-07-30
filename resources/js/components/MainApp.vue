@@ -1,5 +1,6 @@
 <template>
-    <div class="container">
+    <div class="">
+        <navbar></navbar>
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card bg-light text-dark">
@@ -14,8 +15,12 @@
 </template>
 
 <script>
+    import Navbar from './Navbar';
     export default {
         name: 'main-app',
+        components: {
+            Navbar
+        },
         computed: {
             title() {
                 return this.$store.state.title;

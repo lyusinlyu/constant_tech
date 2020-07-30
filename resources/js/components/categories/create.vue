@@ -46,17 +46,9 @@
             this.$store.commit('set_title', this.$route.params.id ? 'Update the Category' : 'Create a Category');
 
             // Get all Categories
-            this.$store.dispatch('getCategories', "")
+            this.$store.dispatch('getCategories', {nested: "", id: ""})
                 .then((response) => {
-                    // //getCategory if update
-                    // if (this.$route.params.id) {
-                    //     let check = setInterval(() => {
-                    //         if (this.categories && this.categories.length) {
-                    //             this.setCategoryData(this.$route.params.id);
-                    //             clearInterval(check);
-                    //         }
-                    //     }, 100);
-                    // }
+                    //
                 })
                 .catch((error) => {});
         },
@@ -93,10 +85,14 @@
                 if (this.$route.params.id) {
                     this.$store.dispatch('updateCategories', [this.category])
                         .then((response) => {
-                            this.$toast.success(response.message);
-                            setTimeout(() => {
-                                this.$router.push({name: 'index'})
-                            }, 1000)
+                            if (response.statusCode == 200) {
+                                this.$toast.success(response.message);
+                                setTimeout(() => {
+                                    this.$router.push({name: 'index'})
+                                }, 1000)
+                            } else if (response.statusCode == 422) {
+                                this.$toast.error(response.message);
+                            }
                         })
                         .catch((error) => {
                             this.$toast.error('Something went wrong')
@@ -104,12 +100,18 @@
                 } else {
                     axios.post('/api/categories', this.category)
                         .then((response) => {
-                            this.$toast.success(response.message);
+                            if (response.data.statusCode == 200) {
+                                this.$toast.success(response.data.message);
+                            }
                             setTimeout(() => {
                                 this.$router.push({name: 'index'})
                             }, 1000)
-                        }).catch(function (error) {
+                        }).catch((error) => {
+                        if (error.response.status == 422) {
+                            this.$toast.error(error.response.data.message);
+                        } else {
                             this.$toast.error('Something went wrong')
+                        }
                     });
                 }
             }

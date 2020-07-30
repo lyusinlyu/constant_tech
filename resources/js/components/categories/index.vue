@@ -1,10 +1,20 @@
 <template>
     <div class="categories-container">
-        <router-link :to="{ name: 'create'}"><i class="fas fa-plus-circle pointer mb-10"></i></router-link>
-        <div v-if="categories.length">
-            <draggable class="list-group" tag="ul" v-model="categories" v-bind="dragOptions" :move="onMove"
+        <div class="row justify-content-between">
+            <div class="col-sm-5">
+                <router-link :to="{ name: 'create'}"><i class="fas fa-plus-circle pointer mb-10"></i></router-link>
+            </div>
+            <div class="col-sm-6">
+                <select v-model="selectedCategoryId" class="form-control">
+                    <option value="">All categories</option>
+                    <option v-for="category in categories" :value="category.id">{{ category.name }}</option>
+                </select>
+            </div>
+        </div>
+        <div v-if="categoriesNested.length">
+            <draggable class="list-group" tag="ul" v-model="categoriesNested" v-bind="dragOptions"
                        @start="isDragging=true" @end="isDragging=false">
-                    <nested-draggable :tasks="categories" />
+                    <nested-draggable :tasks="categoriesNested" />
             </draggable>
         </div>
         <div v-else>There is no existing Category yet.</div>
@@ -23,14 +33,19 @@
         data: function () {
             return {
                 updateData: [],
-                dragOptions: {group: { name:'categories', pull:'clone', put:'true'}}
+                dragOptions: {group: { name:'categories', pull:'clone', put:'true'}},
+                search: '',
+                selectedCategoryId: null,
             }
         },
         computed: {
-            categories: {
+            categories() {
+                return this.$store.state.categories;
+            },
+            categoriesNested: {
                 // getter
                 get: function () {
-                    return this.$store.state.categories;
+                    return this.$store.state.categoriesNested;
                 },
                 // setter
                 set: function (newValue) {
@@ -47,34 +62,33 @@
                     this.setupUpdateData();
                 }
             },
+            selectedCategoryId(val) {
+                // Get selected Category with children
+                this.$store.dispatch('getCategories', {nested: true, id: val ? this.selectedCategoryId : ""})
+                    .then((response) => {
+                        this.categoriesNested = response
+                    })
+                    .catch((error) => {});
+            }
         },
         created() {
-            console.log('created');
             //set title for the page
             this.$store.commit('set_title', 'Categories');
 
+            // Get all Categories with children
+            this.$store.dispatch('getCategories', {nested: true, id: ""});
+
             // Get all Categories
-            this.$store.dispatch('getCategories', true);
-        },
-        mounted() {
-            console.log('mounted');
+            this.$store.dispatch('getCategories', {nested: "", id: ""});
         },
         methods: {
-
-            // onMove event handler: get categories list to update
-            onMove({ relatedContext, draggedContext }) {
-                setTimeout(() => {
-                    this.$store.commit("set_current_list", relatedContext['list']);
-                }, 300)
-            },
-
             // Find parentId for categories list
             findParentCategoryId() {
                 if (!this.currentList[0].parent_id) return null;
                 let parentId, id = this.currentList[0].id;
-                for (let i = 0; i < this.categories.length; i++) {
-                    if (this.categories[i].all_children_categories && this.categories[i].all_children_categories.length) {
-                        parentId = this.searchCategoryParentId(this.categories[i].all_children_categories, this.categories[i].id, id);
+                for (let i = 0; i < this.categoriesNested.length; i++) {
+                    if (this.categoriesNested[i].all_children_categories && this.categoriesNested[i].all_children_categories.length) {
+                        parentId = this.searchCategoryParentId(this.categoriesNested[i].all_children_categories, this.categoriesNested[i].id, id);
                         if (parentId) return parentId;
                     }
                 }
@@ -113,7 +127,6 @@
                         this.$toast.success(response.message)
                     })
                 .catch((error) => {
-                    console.log(error);
                     this.$toast.error('Something went wrong')
                 });
             },

@@ -14,6 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('categories', 'Api\CategoriesController@index');
-Route::post('categories', 'Api\CategoriesController@store');
-Route::put('categories', 'Api\CategoriesController@update');
+Route::post('auth/register', 'Api\RegisterController@register');
+Route::post('auth/login', 'Api\LoginController@login');
+
+Route::group(['middleware' => ['auth:api']], function (){
+    Route::get('me', function () {
+        return response()->json(Auth::user());
+    });
+    Route::get('categories', 'Api\CategoriesController@index');
+    Route::post('categories', 'Api\CategoriesController@store');
+    Route::put('categories', 'Api\CategoriesController@update');
+});

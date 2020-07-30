@@ -29,7 +29,11 @@
         },
         name: "nested-draggable",
         methods: {
+            // onMove event handler: get categories list to update
             onMove({ relatedContext, draggedContext }) {
+                if (!draggedContext.element.parent_id && relatedContext.element.parent_id) {
+                    return false
+                }
                 setTimeout(() => {
                     this.$store.commit("set_current_list", relatedContext['list']);
                 }, 300)
@@ -40,7 +44,6 @@
 <style scoped>
     .dragArea {
         min-height: 50px;
-        /*outline: 1px dashed;*/
     }
 .category-item {
     position: absolute;

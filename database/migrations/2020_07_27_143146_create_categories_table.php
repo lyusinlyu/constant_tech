@@ -15,10 +15,12 @@ class CreateCategoriesTable extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('user_id')->unsigned()->nullable();
             $table->string('name');
             $table->integer('order');
             $table->bigInteger('parent_id')->unsigned()->nullable();
             $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('parent_id')->references('id')->on('categories');
         });
     }
@@ -31,6 +33,7 @@ class CreateCategoriesTable extends Migration
     public function down()
     {
         Schema::table('categories', function (Blueprint $table) {
+            $table->dropForeign('categories_user_id_foreign');
             $table->dropForeign('categories_parent_id_foreign');
         });
         Schema::dropIfExists('categories');

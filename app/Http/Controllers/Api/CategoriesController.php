@@ -16,8 +16,14 @@ class CategoriesController extends Controller
     public function index(Request $request)
     {
         $withSubCategories = $request->get('all');
+        $categoryId = $request->get('id');
         if ($withSubCategories) {
-            return response()->json(Category::whereNull('parent_id')->with('allChildrenCategories')->orderBy('order', 'ASC')->get());
+            if ($categoryId) {
+                $query = Category::where('id', $categoryId);
+            } else {
+                $query = Category::whereNull('parent_id');
+            }
+            return response()->json($query->where('user_id', auth()->user()->id)->with('allChildrenCategories')->orderBy('order', 'ASC')->get());
         }
         return response()->json(Category::all());
     }
@@ -31,7 +37,11 @@ class CategoriesController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
+        $data = $request->validate([
+            'name' => 'bail|required|max:255',
+            'parent_id' => ''
+        ]);
+        $data['user_id'] = auth()->user()->id;
         $data['order'] = isset($data['parent_id']) ? Category::find($data['parent_id'])->childrenCategories->count() : Category::whereNull('parent_id')->get()->count();
         Category::create($data);
         return response()->json([
@@ -51,6 +61,12 @@ class CategoriesController extends Controller
     {
         $dataToUpdate = $request->all();
         foreach ($dataToUpdate as $data) {
+            if (!isset($data['name'])) {
+                return response()->json([
+                    'statusCode' => 422,
+                    'message' => 'Name is required'
+                ]);
+            }
             Category::where('id', $data['id'])->update([
                 'name' => $data['name'],
                 'order' => $data['order'],

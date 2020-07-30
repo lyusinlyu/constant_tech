@@ -25,12 +25,34 @@ composer install
 php artisan key:generate
 ```
 
+3) JWTAuth: Add the service provider to the providers array in the config/app.php config file as follows:
+
+```
+'providers' => [
+
+    Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+]
+```
+
+Publish the config
+```
+#!terminal
+php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
+```
+
+Generate secret key
+```
+#!terminal
+php artisan jwt:secret
+```
+
+Start web server
 ```
 #!terminal
 php artisan serve
 ```
 
-5) You should now be up and running on localhost:8000
+4) You should now be up and running on localhost:8000
 
 ## Front-End Development, Sass, Js & LiveReload ##
 
