@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Category;
+use Illuminate\Support\Facades\Auth;
 
 class CategoriesController extends Controller
 {
@@ -23,7 +24,8 @@ class CategoriesController extends Controller
             } else {
                 $query = Category::whereNull('parent_id');
             }
-            return response()->json($query->where('user_id', auth()->user()->id)->with('allChildrenCategories')->orderBy('order', 'ASC')->get());
+            $response = $query->where('user_id', Auth::id())->with('allChildrenCategories')->orderBy('order', 'ASC')->get();
+            return response()->json($response);
         }
         return response()->json(Category::all());
     }
@@ -41,12 +43,13 @@ class CategoriesController extends Controller
             'name' => 'bail|required|max:255',
             'parent_id' => ''
         ]);
-        $data['user_id'] = auth()->user()->id;
+        $data['user_id'] = Auth::id();
         $data['order'] = isset($data['parent_id']) ? Category::find($data['parent_id'])->childrenCategories->count() : Category::whereNull('parent_id')->get()->count();
-        Category::create($data);
+        $category = Category::create($data);
         return response()->json([
             'statusCode' => 200,
-            'message' => 'Category was created successfully'
+            'message' => 'Category was created successfully',
+            'data' => $category
         ]);
     }
 

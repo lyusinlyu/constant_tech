@@ -99,7 +99,7 @@
                     if (arr[i].id == id) {
                         return parentId;
                     } else if (arr[i].all_children_categories && arr[i].all_children_categories.length) {
-                        pId = this.searchCategoryParent(arr[i].all_children_categories, arr[i].id, id);
+                        pId = this.searchCategoryParentId(arr[i].all_children_categories, arr[i].id, id);
                     }
                 }
                 return pId;
