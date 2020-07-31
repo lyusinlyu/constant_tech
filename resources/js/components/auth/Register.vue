@@ -66,7 +66,6 @@
                 const credentials = this.$data.form;
                 register(credentials)
                     .then((res) => {
-                        console.log('regggg');
                         this.$store.commit("login_success", {access_token: res});
                             this.$router.push({name: 'index'});
                         })

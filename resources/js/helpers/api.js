@@ -33,27 +33,3 @@ export function getAuthUser() {
             });
     });
 }
-
-export function fetchBoards() {
-    return new Promise((res, rej) => {
-        axios.get('/api/boards')
-            .then((response) => {
-                res(response.data);
-            })
-            .catch((error) => {
-                rej(error);
-            });
-    });
-}
-
-export function createBoard(inputs) {
-    return new Promise((res, rej) => {
-        axios.post('/api/boards', inputs)
-            .then((response) => {
-                res(response.data);
-            })
-            .catch((error) => {
-                rej(error);
-            });
-    });
-}

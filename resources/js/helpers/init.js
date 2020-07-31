@@ -25,7 +25,6 @@ export function init(store, router) {
 
     /*Define Middleware for Vue Router*/
     router.beforeEach((to, from, next) => {
-        console.log('aaaaaaaaa');
         const isLoggedIn = store.state.isLoggedIn;
         const isProtected = to.meta.protected;
 

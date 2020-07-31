@@ -1,5 +1,3 @@
-import {fetchBoards as apiFetchBoards} from './helpers/api';
-
 export default {
     state: {
         isLoggedIn: !!localStorage.getItem('token'),
